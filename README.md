@@ -163,12 +163,7 @@ Output Segmentation (12 × 480 × 360)
 - ✅ Good class balance
 - ✅ High-quality annotations
 
-**Alternative Datasets**:
-- **Cityscapes**: Higher quality, larger (50GB+), requires registration
-- **KITTI**: Autonomous driving, stereo vision support
-- **PASCAL VOC**: General segmentation, 20 classes
 
----
 
 ## 🚀 Installation
 
@@ -377,7 +372,7 @@ Example predictions showing:
 - ✅ Sharp boundaries
 - ✅ Multi-class recognition
 
-*(Add sample images here after training)*
+
 
 ### Navigation Performance
 
@@ -491,86 +486,6 @@ COST_VALUES = {
 
 ---
 
-## 💡 Usage Examples
-
-### Example 1: Training with Custom Settings
-
-```python
-import config
-
-# Modify settings
-config.BATCH_SIZE = 8
-config.LEARNING_RATE = 5e-5
-config.NUM_EPOCHS = 30
-
-# Train
-!python scripts/train.py
-```
-
-### Example 2: Generate Cost Map
-
-```python
-from utils.visualization import create_color_map, label_to_color
-import numpy as np
-
-def segment_to_costmap(prediction, cost_dict):
-    """Convert segmentation to navigation cost map"""
-    cost_map = np.zeros_like(prediction, dtype=np.float32)
-    for class_idx, cost in cost_dict.items():
-        cost_map[prediction == class_idx] = cost
-    return cost_map
-
-# Use after getting prediction
-costmap = segment_to_costmap(pred_mask, config.COST_VALUES)
-```
-
-### Example 3: Real-Time Inference
-
-```python
-import cv2
-import torch
-from models.deeplabv3plus import create_model
-
-# Load model once
-model = create_model(num_classes=12, device='cuda')
-model.load_state_dict(torch.load('models/checkpoints/best.pth')['model_state_dict'])
-model.eval()
-
-# Process video stream
-cap = cv2.VideoCapture(0)
-while True:
-    ret, frame = cap.read()
-    # Preprocess frame...
-    with torch.no_grad():
-        prediction = model.predict(frame_tensor)
-    # Visualize and display...
-```
-
----
-
-## 🔬 Future Improvements
-
-### Short-term (1-2 weeks)
-- [ ] Add more datasets (Cityscapes, KITTI)
-- [ ] Implement different backbones (EfficientNet, MobileNet)
-- [ ] Add test-time augmentation
-- [ ] Export to ONNX for deployment
-
-### Medium-term (1-2 months)
-- [ ] Temporal consistency for video segmentation
-- [ ] Multi-scale inference
-- [ ] Model compression (quantization, pruning)
-- [ ] REST API for inference
-- [ ] Docker containerization
-
-### Long-term (3+ months)
-- [ ] ROS integration for real robots
-- [ ] Real-time SLAM integration
-- [ ] Dynamic obstacle prediction
-- [ ] Multi-camera fusion
-- [ ] Edge device deployment (Jetson, Raspberry Pi)
-
----
 
 ## 🤝 Contributing
 
